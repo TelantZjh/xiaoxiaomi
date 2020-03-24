@@ -4,37 +4,37 @@
         <van-icon name="search" slot="right" />
      </van-nav-bar>
      <div class="content">
-         <div class="left">
-             <div class="item" v-for="(item,index) in cate" :key="index">
+         <div class="left" ref="left">
+             <div class="item" v-for="(item,index) in cate" :key="index" :class="{'active':index==current}" @click="changeCur(index)">
                  {{item.category_name}}
             </div>
          </div>
-         <div class="right">
-           <!-- <van-tree-select
-             v-for="(items,ind) in data"
-            :items="items.category_name"
-            :main-active-index.sync="active"
-            >
-            <template #content>
-               <div></div>
-            </template>
-        </van-tree-select> -->
+         <div class="right" >
+         
          </div>
      </div>
     </div>
 </template>
 <script>
-import Cla from '@/components/Cla.vue'
+
 export default {
     data(){ return {
         cate:[],//分类信息
-        active: 0,
-        items: [{ text: '新品' }, { text: '众筹' }]
+        current:0,
+       
     }},
     created(){
         this.getCate();
     },
     methods:{
+        changeCur(index){
+            this.current = index;
+            let left = this.$refs.left;
+            let items = document.querySelectorAll(".left .item");
+            let el = items[index]
+            let leftH = left.offsetHeight;
+            left.scrollTop = el.offsetTop-leftH/2 - el.offsetHeight/2;
+        },
         // 获取分类
         getCate(){
             this.$http.get("/mi/category.php")
@@ -48,11 +48,12 @@ export default {
         }
     },
     components:{
-      Cla,
+      
     }
 }
 </script>
 <style scoped>
+    .item.active{color:#f30}
     .category{ display: flex; flex-direction: column;  }
     .content{ flex:1; /* 自适应高 */ display: flex; height: 100%; overflow:hidden; }
     .left{ width:1.5rem; height: 100%; overflow: auto; border-right: 1px solid #fafafa; /*宽1.5rem 高100%； 超出高度隐藏 有边框*/ }
@@ -66,6 +67,8 @@ export default {
         /* 高.88rem，行高.88rem; 文字居中  文字大小.12rem  下边框 */
 
     }
+    .left{width:1.5rem; height: 100%; overflow:auto; border-right:1px solid #fafafa;scroll-behavior:smooth;}
+    .left::-webkit-scrollbar{display:none;}
 </style>
 
  
